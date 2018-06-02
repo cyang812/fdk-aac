@@ -30,6 +30,7 @@
 #include "wavreader.h"
 
 void usage(const char* name) {
+	fprintf(stderr, "%s in.aac out.wav\n", name);
 	fprintf(stderr, "%s [-r bitrate] [-t aot] [-a afterburner] [-s sbr] [-v vbr] in.wav out.aac\n", name);
 	fprintf(stderr, "Supported AOTs:\n");
 	fprintf(stderr, "\t2\tAAC-LC\n");
@@ -38,6 +39,8 @@ void usage(const char* name) {
 	fprintf(stderr, "\t23\tAAC-LD\n");
 	fprintf(stderr, "\t39\tAAC-ELD\n");
 }
+
+extern int dec_main(char *in, char *out); 
 
 int main(int argc, char *argv[]) {
 	int bitrate = 64000;
@@ -86,6 +89,21 @@ int main(int argc, char *argv[]) {
 	infile = argv[optind];
 	outfile = argv[optind + 1];
 
+	if(strstr(infile, ".aac") || strstr(infile, ".AAC"))
+	{
+		dec_main(infile, outfile);
+		return 0;
+	}
+	else if(strstr(infile, ".wav") || strstr(infile, ".WAV"))
+	{
+	}
+	else
+	{
+		usage(argv[0]);
+		return 1;
+	}
+
+	printf("fdk-aac_encoder!\n");
 	wav = wav_read_open(infile);
 	if (!wav) {
 		fprintf(stderr, "Unable to open wav file %s\n", infile);
@@ -235,6 +253,7 @@ int main(int argc, char *argv[]) {
 	wav_read_close(wav);
 	aacEncClose(&handle);
 
+	printf("encode end!\n");
 	return 0;
 }
 

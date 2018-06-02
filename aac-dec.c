@@ -29,14 +29,19 @@
 #include "libAACdec/include/aacdecoder_lib.h"
 #include "wav_file.h"
 
-void usage(const char* name) {
-	fprintf(stderr, "%s [-r bitrate] [-t aot] [-a afterburner] [-s sbr] [-v vbr] in.wav out.aac\n", name);
-	fprintf(stderr, "Supported AOTs:\n");
-	fprintf(stderr, "\t2\tAAC-LC\n");
-	fprintf(stderr, "\t5\tHE-AAC\n");
-	fprintf(stderr, "\t29\tHE-AAC v2\n");
-	fprintf(stderr, "\t23\tAAC-LD\n");
-	fprintf(stderr, "\t39\tAAC-ELD\n");
+void dec_usage(const char* name) {
+	fprintf(stderr, "use this like that:\n");
+	fprintf(stderr, "%s in.aac out.wav\n", name);
+}
+
+int check_usage(char *in, char *out)
+{
+	if(in == NULL || out == NULL)
+	{
+		return 1;	
+	}
+
+	return 0;
 }
 
 uint32_t get_data(uint8_t *sample_buffer, uint32_t frame_size, FILE *file)
@@ -47,18 +52,28 @@ uint32_t get_data(uint8_t *sample_buffer, uint32_t frame_size, FILE *file)
 	
 	if(samples_read != frame_size)
 	{
-		printf("frame_size = %d\n", frame_size);
-		printf("samples_read = %d\n", samples_read);
+//		printf("frame_size = %d\n", frame_size);
+//		printf("samples_read = %d\n", samples_read);
 	}
 	
 	return samples_read;
 }
 
-int main(int argc, char *argv[]) 
+int dec_main(char *in, char *out) 
 {
-	printf("fdk-aac_dabplus!\n");
-
+	const char *infile, *outfile;
 	FILE *In_file;
+
+	infile = in;
+	outfile = out;
+
+	if(check_usage(infile, outfile))
+	{
+		dec_usage("fdkaac.exe");
+		return 0;
+	}
+	
+	printf("fdk-aac_decoder!\n");
 
 	HANDLE_AACDECODER aacDec;
 	CStreamInfo *aac_stream_info = NULL;  
@@ -88,18 +103,18 @@ int main(int argc, char *argv[])
 
 	INT_PCM *convert_buf = output_buf; //output buf
 
-	#define IN_FILE_NAME  "E:\\wav\\out.aac"
-	In_file = fopen(IN_FILE_NAME, "rb"); // input file
+//	#define IN_FILE_NAME  "E:\\wav\\out.aac"
+	In_file = fopen(infile, "rb"); // input file
 	if(!In_file)
 	{
 		printf("open in file fail!\n");	
 		return;
 	}
 
-	#define OUT_FILE_NAME  "E:\\wav\\1.wav"
+//	#define OUT_FILE_NAME  "E:\\wav\\1.wav"
 	
 	HANDLE_WAV *pWav = (HANDLE_WAV *)malloc(sizeof(struct WAV));  //output file
-	if(WAV_OutputOpen(pWav, OUT_FILE_NAME, 44100, 2, 16) == -1)
+	if(WAV_OutputOpen(pWav, outfile, 44100, 2, 16) == -1)
 	{
 		printf("open wav file fail!\n");
 		return;
@@ -113,7 +128,7 @@ int main(int argc, char *argv[])
 
 	/* 1- update external input buffer first */	
 	isInFileEnd = get_data(input_buf[0], 8192, In_file);
-	printf("first read bytes = %d\n",isInFileEnd);
+//	printf("first read bytes = %d\n",isInFileEnd);
 	printf("begin to decode!\n");
 
 	/* 2- decode loop */
@@ -139,7 +154,7 @@ int main(int argc, char *argv[])
 			aac_stream_info = aacDecoder_GetStreamInfo(aacDec);  
 			uint32_t convert_size = aac_stream_info->numChannels*aac_stream_info->frameSize*sizeof(INT_PCM);
 			short *pcmBuf = convert_buf;
-			WAV_OutputWrite(*pWav, pcmBuf, 2048, 16, 0);
+			WAV_OutputWrite(*pWav, pcmBuf, convert_size/2, 16, 0);
 		}
 		else
 		{
