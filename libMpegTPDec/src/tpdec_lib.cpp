@@ -2,7 +2,7 @@
 /* -----------------------------------------------------------------------------------------------------------
 Software License for The Fraunhofer FDK AAC Codec Library for Android
 
-© Copyright  1995 - 2015 Fraunhofer-Gesellschaft zur Förderung der angewandten Forschung e.V.
+?Copyright  1995 - 2015 Fraunhofer-Gesellschaft zur Förderung der angewandten Forschung e.V.
   All rights reserved.
 
  1.    INTRODUCTION
@@ -1057,9 +1057,18 @@ TRANSPORTDEC_ERROR transportDec_ReadAccessUnit( const HANDLE_TRANSPORTDEC hTp, c
 
   hBs = &hTp->bitStream[layer];
 
+#if 0
   if ((INT)FDKgetValidBits(hBs) <= 0) {
+  	printf("res = %d\n", res);
     err = TRANSPORTDEC_NOT_ENOUGH_BITS;
   }
+#else
+  int valid = (INT)FDKgetValidBits(hBs) ;
+  if (valid <= 0) {
+    FDKprintf("valid = %d\n", valid);
+    err = TRANSPORTDEC_NOT_ENOUGH_BITS;
+  }
+#endif
 
   switch (hTp->transportFmt) {
 
