@@ -126,6 +126,16 @@ int dec_main(char *in, char *out)
 		return -1;
 	}
 
+
+	//manually set low power mode. It's not necessary.
+	// printf("fdk_aac use lp power mode!\n");
+	// error_code = aacDecoder_SetParam(aacDec, AAC_QMF_LOWPOWER, 1MODE_LP);
+	// if(error_code != 0)
+	// {
+	// 	printf("aaDecoder set param fail!\n");
+	// 	return -1;
+	// }
+
 	/* 1- update external input buffer first */	
 	isInFileEnd = get_data(input_buf[0], 8192, In_file);
 //	printf("first read bytes = %d\n",isInFileEnd);

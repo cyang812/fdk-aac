@@ -30,8 +30,8 @@
 #include "wavreader.h"
 
 void usage(const char* name) {
-	fprintf(stderr, "%s in.aac out.wav\n", name);
-	fprintf(stderr, "%s [-r bitrate] [-t aot] [-a afterburner] [-s sbr] [-v vbr] in.wav out.aac\n", name);
+	fprintf(stderr, "aac->wav like this: %s in.aac out.wav\n", name);
+	fprintf(stderr, "wav->aac like this: %s [-r bitrate] [-t aot] [-a afterburner] [-s sbr] [-v vbr] in.wav out.aac\n", name);
 	fprintf(stderr, "Supported AOTs:\n");
 	fprintf(stderr, "\t2\tAAC-LC\n");
 	fprintf(stderr, "\t5\tHE-AAC\n");
@@ -104,6 +104,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	printf("fdk-aac_encoder!\n");
+	printf("begin to encode!\n");
 	wav = wav_read_open(infile);
 	if (!wav) {
 		fprintf(stderr, "Unable to open wav file %s\n", infile);
