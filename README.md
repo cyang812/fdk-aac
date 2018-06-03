@@ -1,4 +1,4 @@
-# FORK by [fdk-aac](https://github.com/mstorsjo/fdk-aac)
+# FORKED FROM [fdk-aac](https://github.com/mstorsjo/fdk-aac)
 
 # AAC ENC
 
